@@ -53,16 +53,9 @@ namespace EveractiveApiDemo
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<Boolean> HealthCheck()
-        {            
-            var response = await _httpClient.GetAsync("v2020-07/health");
-            var b = response.IsSuccessStatusCode;
-            return response.IsSuccessStatusCode;
-        }
-
         public async Task<List<SteamTrap>> GetSteamTraps()
         {
-            var token = await _getAuthToken();
+            var token = await _getAuthToken();            
             
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
             var response = await _httpClient.GetAsync("v2020-07/steamtraps?page=1&pageSize=25");
@@ -84,8 +77,7 @@ namespace EveractiveApiDemo
                 var response = await _httpClient.PostAsync("v2020-07/auth/token/", content);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine(response.StatusCode);
-                    Console.ReadLine();
+                    Console.WriteLine($"Unsuccessful authentication - {response.StatusCode}");
                 }
 
                 var resultJson = await response.Content.ReadAsStringAsync();
