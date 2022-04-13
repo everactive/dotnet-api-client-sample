@@ -11,24 +11,20 @@ namespace EveractiveApiDemo
     {
         static void Main(string[] args)
         {
-            var audience = Environment.GetEnvironmentVariable("EVERACTIVE_AUDIENCE");
-            var authUrl = Environment.GetEnvironmentVariable("EVERACTIVE_AUTH_URL");
             var baseUrl = Environment.GetEnvironmentVariable("EVERACTIVE_API_URL");
             string clientId = Environment.GetEnvironmentVariable("EVERACTIVE_CLIENT_ID");
             string clientSecret = Environment.GetEnvironmentVariable("EVERACTIVE_CLIENT_SECRET");
 
-            if (string.IsNullOrEmpty(audience) ||
-                string.IsNullOrEmpty(authUrl) ||
-                string.IsNullOrEmpty(baseUrl) ||
+            if (string.IsNullOrEmpty(baseUrl) ||
                 string.IsNullOrEmpty(clientId) ||
                 string.IsNullOrEmpty(clientSecret)) 
             {
-                Console.WriteLine("EVERACTIVE_AUDIENCE, EVERACTIVE_AUTH_URL, EVERACTIVE_API_URL, EVERACTIVE_CLIENT_ID and EVERACTIVE_CLIENT_SECRET must be defined");
+                Console.WriteLine("EVERACTIVE_API_URL, EVERACTIVE_CLIENT_ID and EVERACTIVE_CLIENT_SECRET must be defined");
                 Console.ReadLine();
                 return;
             }
 
-            var apiService = new ApiService(audience, authUrl, baseUrl, clientId, clientSecret);
+            var apiService = new ApiService(baseUrl, clientId, clientSecret);
             var traps = apiService.GetSteamTraps().Result;
 
             Console.WriteLine($"Returned {traps.Count} steam traps");
@@ -42,20 +38,16 @@ namespace EveractiveApiDemo
 
 
         private AuthToken _authToken = new AuthToken();
-        private string _audience;
         private string _authUrl;
         private string _clientId;
         private string _clientSecret;
 
         public ApiService(
-            string audience,
-            string authUrl,
             string baseAddress,
             string clientId,
             string clientSecret)
         {
-            _audience = audience;
-            _authUrl = authUrl;
+            _authUrl = baseAddress + "/auth/token";
             _clientId = clientId;
             _clientSecret = clientSecret;
 
@@ -80,7 +72,6 @@ namespace EveractiveApiDemo
             if (this._authToken.Expires <= DateTime.UtcNow)
             {
                 var dict = new Dictionary<string, string>();
-                dict.Add("audience", _audience);
                 dict.Add("client_id", _clientId);
                 dict.Add("client_secret", _clientSecret);
                 dict.Add("grant_type", "client_credentials");

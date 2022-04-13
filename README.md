@@ -18,8 +18,6 @@ To Run:
 docker run \
 -it \
 --rm \
---env EVERACTIVE_AUDIENCE="https://everactive/audience" \
---env EVERACTIVE_AUTH_URL="https://auth.insights.everactive.com/oauth/token" \
 --env EVERACTIVE_API_URL="https://api.data.everacrtive.com" \
 --env EVERACTIVE_CLIENT_ID="YOUR CLIENT ID" \
 --env EVERACTIVE_CLIENT_SECRET="YOUR CLIENT SECRET" \
