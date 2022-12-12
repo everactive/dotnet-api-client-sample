@@ -25,9 +25,10 @@ namespace EveractiveApiDemo
             }
 
             var apiService = new ApiService(baseUrl, clientId, clientSecret);
-            var traps = apiService.GetSteamTraps().Result;
+            var Sensors = apiService.GetEversensors().Result;
 
-            Console.WriteLine($"Returned {traps.Count} steam traps");
+            Console.WriteLine($"Returned Sensors");
+            Console.WriteLine(Sensors);
             Console.ReadLine();
         }
     }
@@ -56,15 +57,14 @@ namespace EveractiveApiDemo
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<List<SteamTrap>> GetSteamTraps()
+        public async Task<string> GetEversensors()
         {
             var token = await _getAuthToken();            
             
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
-            var response = await _httpClient.GetAsync("v2020-07/steamtraps?page=1&pageSize=25");
+            var response = await _httpClient.GetAsync("ds/v1/eversensors");
             var resultJson = await response.Content.ReadAsStringAsync();
-            var steamTrapRsp = JsonConvert.DeserializeObject<EveractiveRspWrapper<List<SteamTrap>>>(resultJson);
-            return steamTrapRsp.Data;
+            return resultJson;
         }
 
         private async Task<AuthToken> _getAuthToken()
@@ -116,62 +116,5 @@ namespace EveractiveApiDemo
             get { return Issued.AddSeconds(ExpiresIn); }
         }
     }
-
-    class EveractiveRspWrapper<T>
-    {
-        public T Data { get; set; }
-        
-        #nullable enable
-        public PaginationInfo? PaginationInfo { get; set; }
-    }
-
-    class PaginationInfo
-    {
-        int Page { get; set; }
-        int PageSize { get; set; }
-        int TotalItems { get; set; }
-        int TotalPages { get; set; }
-    }
-
-    class SteamTrap
-    {
-        [JsonProperty("id")]
-        string Id { get; set; }
-        
-        [JsonProperty("status")]
-        SteamTrapStatus? Status { get; set; }
-        
-        [JsonProperty("trapDetail")]
-        SteamTrapDetail? TrapDetail { get; set; }
-    }
-
-    class SteamTrapDetail
-    {
-        [JsonProperty("manufacturer")]
-        string Manufacturer { get; set; }
-
-        [JsonProperty("Model")]
-        string Model { get; set; }
-
-        [JsonProperty("orificeDiameter")]
-        double? OrificeDiameter { get; set; }
-
-        [JsonProperty("type")]
-        string Type { get; set; }
-    }
-
-    class SteamTrapStatus
-    {
-        [JsonProperty("steamState")]
-        string? SteamState { get; set; }
-
-        [JsonProperty("steamStateChangeTimestamp")]
-        Int64? SteamStateChangeTimestamp { get; set; }
-
-        [JsonProperty("trapState")]
-        string? TrapState { get; set; }
-
-        [JsonProperty("trapFailureTimestamp")]
-        Int64? TrapFailureTimestamp { get; set; }
-    }
+    
 }
