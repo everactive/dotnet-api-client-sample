@@ -1,6 +1,6 @@
 # Everactive API Client Sample - C# .NET5.0
 
-A sample client using the C# .NET5.0 HttpClient to retrieve a list of steam traps.
+A sample client using the C# .NET5.0 HttpClient to retrieve a list of Eversensors from the Everactive Platform API.
 
 To use this sample you must have a `client_credentials` grant_type `client_id` and `client_secret` provided by Everactive.
 
